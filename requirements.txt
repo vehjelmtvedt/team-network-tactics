@@ -1,1 +1,4 @@
 rich
+pymongo
+dnspython
+python-dotenv
