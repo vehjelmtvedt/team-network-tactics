@@ -2,7 +2,7 @@
 A game for the mandatory assignment
 
 Team members:
-- Vetle Hjelmstvedt
+- Vetle Hjelmtvedt
 - Lars Holter
 
 Group on MittUiB:  Mandatory assignment 90
