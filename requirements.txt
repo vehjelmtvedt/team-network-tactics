@@ -1,4 +1,4 @@
 rich
-dotenv
+python-dotenv
 pymongo
-pydns
+dnspython

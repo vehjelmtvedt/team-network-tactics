@@ -1,3 +1,4 @@
+from matplotlib import collections
 from pymongo import MongoClient
 from dotenv import dotenv_values
 
@@ -15,6 +16,8 @@ def get_database():
     return client['LNT']
 
 
+# CHAMPIONS
+
 def add_champion(champ):
     collection = get_database()["Champions"]
     collection.insert_one(champ)
@@ -23,6 +26,7 @@ def add_champion(champ):
 def get_champion(name):
     collection = get_database()["Champions"]
     champList = collection.find({"Name": name})
+    # TODO: error handle this
     champ = champList[0]
     return {
         "Name": champ["Name"],
@@ -32,7 +36,17 @@ def get_champion(name):
     }
 
 
-print(get_champion("Twist"))
+# MATCH STATISTICS
+
+def uploadMatchStatistic(match):
+    collection = get_database()["MatchHistory"]
+    collection.insert_one(match)
+
+def getMatchHistory(nMatches):
+    collection = get_database()["MatchHistory"]
+    matchList = collection.find().skip(collection.count() - nMatches)
+    return matchList[0:11]
+
 
 
 
