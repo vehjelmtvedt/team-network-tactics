@@ -1,19 +1,23 @@
 from core import Champion
+import DBService
 
 
-def _parse_champ(champ_text: str) -> Champion:
-    name, rock, paper, scissors = champ_text.split(sep=',')
-    return Champion(name, float(rock), float(paper), float(scissors))
-
-
-def from_csv(filename: str) -> dict[str, Champion]:
+def from_DB() -> dict[str, Champion]:
     champions = {}
-    with open(filename, 'r') as f:
-        for line in f.readlines():
-            champ = _parse_champ(line)
-            champions[champ.name] = champ
+
+    champList = DBService.get_all_champs()
+    for champ in champList:
+        champion = Champion(champ["Name"], 
+        float(champ["rockProbability"]), 
+        float(champ["scissorsProbability"]),
+        float(champ["paperProbability"]))
+        
+        champions[champ["Name"]] = champion
+
     return champions
 
 
 def load_some_champs():
-    return from_csv('some_champs.txt')
+    return from_DB()
+    
+

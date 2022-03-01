@@ -1,4 +1,3 @@
-from matplotlib import collections
 from pymongo import MongoClient
 from dotenv import dotenv_values
 
@@ -34,6 +33,12 @@ def get_champion(name):
         "paperProbability": champ["paperProbability"],
         "scissorsProbability": champ["scissorsProbability"]
     }
+
+def get_all_champs():
+    collection = getCollection("Champions")
+    return collection.find()
+
+
 
 
 # MATCH STATISTICS
