@@ -5,7 +5,7 @@ from dotenv import dotenv_values
 config = dotenv_values(".env")
 
 
-def get_database():
+def getCollection(collection):
     # Provide the mongodb atlas url to connect python to mongodb using pymongo
     CONNECTION_STRING = config["DB_URL"]
 
@@ -13,18 +13,18 @@ def get_database():
     client = MongoClient(CONNECTION_STRING)
 
     # Create the database for our example (we will use the same database throughout the tutorial
-    return client['LNT']
+    return client['LNT'][collection]
 
 
 # CHAMPIONS
 
 def add_champion(champ):
-    collection = get_database()["Champions"]
+    collection = getCollection("Champions")
     collection.insert_one(champ)
 
 
 def get_champion(name):
-    collection = get_database()["Champions"]
+    collection = getCollection("Champions")
     champList = collection.find({"Name": name})
     # TODO: error handle this
     champ = champList[0]
@@ -39,13 +39,19 @@ def get_champion(name):
 # MATCH STATISTICS
 
 def uploadMatchStatistic(match):
-    collection = get_database()["MatchHistory"]
+    collection = getCollection("MatchHistory")
     collection.insert_one(match)
 
+
 def getMatchHistory(nMatches):
-    collection = get_database()["MatchHistory"]
-    matchList = collection.find().skip(collection.count() - nMatches)
-    return matchList[0:11]
+    collection = getCollection("MatchHistory")
+    matchList = collection.find({}).limit(nMatches)
+    return matchList
+
+
+
+
+
 
 
 
