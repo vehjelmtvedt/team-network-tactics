@@ -1,3 +1,5 @@
+import json
+
 from dataclasses import dataclass
 from enum import Enum
 from random import random, shuffle
@@ -117,6 +119,14 @@ class Champion:
         return (f'{self._name:10}|   {self._rock:.2f}   |   '
                 f'{self._paper:.2f}   |   {(1-self._rock-self._paper):.2f}')
 
+    def to_dict(self):
+        return {
+            "Name": self._name,
+            "rock": self._rock,
+            "paper": self._paper,
+            "scissors": round((1 - (self._paper + self._rock)), 2)
+        }
+
 
 def pair_throw(red_champ: Champion,
                blue_champ: Champion,
@@ -156,6 +166,12 @@ class Team:
     def __iter__(self) -> list[Champion]:
         shuffle(self.champions)
         return iter(self.champions)
+
+    def to_dict(self):
+        liste = []
+        for champ in self.champions:
+            liste.append(champ.to_dict())
+        return liste
 
 
 @dataclass
@@ -200,3 +216,12 @@ class Match:
     @property
     def rounds(self) -> list[dict[str, PairThrow]]:
         return self._rounds
+
+    def to_dict(self):
+        return {
+            "Red": self.red_team.to_dict(),
+            "Blue": self.blue_team.to_dict(),
+            "n_rounds": self.n_rounds,
+            "red_score": self.score[0],
+            "blue_score": self.score[1]
+        }

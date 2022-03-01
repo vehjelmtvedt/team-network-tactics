@@ -3,6 +3,7 @@ from rich import print
 from rich.prompt import Prompt
 from rich.table import Table
 
+
 from champlistloader import load_some_champs
 from core import Champion, Match, Shape, Team
 
@@ -125,7 +126,7 @@ def main() -> None:
     print_match_summary(match)
 
     # Upload match history
-    DBService.uploadMatchStatistic(match)
+    DBService.uploadMatchStatistic(match.to_dict())
 
 
 if __name__ == '__main__':
