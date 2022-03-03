@@ -1,5 +1,6 @@
 from pymongo import MongoClient
 from dotenv import dotenv_values
+from core import Champion
 
 config = dotenv_values(".env")
 
@@ -35,9 +36,12 @@ def get_champion(name):
     }
 
 def get_all_champs():
-    collection = getCollection("Champions")
-    return collection.find()
-
+    champs = {}
+    collection = getCollection("Champions").find()
+    for doc in collection:
+        champ = Champion(doc["Name"], int(doc["rockProbability"]), int(doc["paperProbability"]))
+        champs[doc["Name"]] = champ
+    return champs
 
 
 

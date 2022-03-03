@@ -1,4 +1,6 @@
 import socket 
+import DBService
+import pickle
 
 class TNTServer:
     def __init__(self, host, port, connections):
@@ -15,6 +17,7 @@ class TNTServer:
         self._sock.listen()
         # Start accepting incoming connections
         self.welcome_message()
+        
 
     def shut_down(self):
         self._sock.close()
@@ -44,16 +47,28 @@ class TNTServer:
             conn.send(msg)
 
     def game_loop(self):
-        # Start by telling client to print champion rubric
-        self.send_to_all("CMD PRINT CHAMP_RUBRIC".encode())
+        # Need to send all champions to both clients
+        print("Fetching champions")
+        champions = DBService.get_all_champs()
+        # Sending recvchamps
+        print("Sending recvchamps")
+        self.send_to_all("RECVCHAMPS".encode())
+        # Sending champs
+        print("Sending champs")
+        self.send_to_all(pickle.dumps(champions))
 
 
 if __name__ == "__main__":
     HOST = "127.0.0.1"
-    PORT = 7002
+    PORT = 7008
     serv = TNTServer(HOST, PORT, [])
     serv.start_up()
     serv.shut_down()
+
+
+
+
+
 
 
 
