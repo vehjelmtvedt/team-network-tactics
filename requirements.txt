@@ -1,4 +1,11 @@
 rich
+<<<<<<< HEAD
 pymongo
 dnspython
 python-dotenv
+=======
+python-dotenv
+pymongo
+dnspython
+pydantic
+>>>>>>> 9be5ec4e90566b25e3f91f611817d880614592d1

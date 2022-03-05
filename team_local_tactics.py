@@ -1,9 +1,12 @@
+import DBService
 from rich import print
 from rich.prompt import Prompt
 from rich.table import Table
 
+
 from champlistloader import load_some_champs
 from core import Champion, Match, Shape, Team
+
 
 
 def print_available_champs(champions: dict[Champion]) -> None:
@@ -121,6 +124,9 @@ def main() -> None:
 
     # Print a summary
     print_match_summary(match)
+
+    # Upload match history
+    DBService.uploadMatchStatistic(match.to_dict())
 
 
 if __name__ == '__main__':
