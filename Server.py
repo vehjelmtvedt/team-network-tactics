@@ -2,11 +2,15 @@ import socket
 import DBService
 import pickle
 
+welcome_msg = 'MSG \n' 'Welcome to [bold yellow]Team Local Tactics[/bold yellow]!' '\n' 'Each player choose a champion each time.' '\n'
+
 class TNTServer:
     def __init__(self, host, port, connections):
         self._host = host
         self._port = port 
         self._connections = connections
+        self._player1 = []
+        self._player2 = []
 
     def start_up(self):
         # Create the socket
@@ -33,34 +37,59 @@ class TNTServer:
                 self._connections.append(conn)
                 # If only connection, send msg waiting for other player
                 if (len(self._connections) == 1):
-                    self.send_message_to_client(conn, "MSG Waiting for other player.")
+                    data = {
+                        "CMD": "MSG",
+                        "Value": "Waiting for other player."
+                    }
+                    self.send_message_to_client(conn, pickle.dumps(data))
                 # If two connections start game
                 else:
                     self.game_loop()
 
 
-    def send_message_to_client(self, conn, msg):
-        conn.send(msg.encode())
+    def send_message_to_client(self, conn, data):
+        conn.send(data)
 
-    def send_to_all(self, msg):
+    def send_to_all(self, data):
         for conn in self._connections:
-            conn.send(msg)
+            conn.send(data)
+
+    def display_welcome_and_champs(self):
+        # Ask client to print welcome message
+        data = {
+            "CMD": "PRINTWELCOME"
+        }
+        self.send_to_all(pickle.dumps(data))
+
+        # Need to send all champions to both clients
+        champions = DBService.get_all_champs()
+
+        data = {
+            "CMD": "RECVCHAMPS",
+            "Value": champions
+        }
+        self.send_to_all(pickle.dumps(data))
 
     def game_loop(self):
-        # Need to send all champions to both clients
-        print("Fetching champions")
-        champions = DBService.get_all_champs()
-        # Sending recvchamps
-        print("Sending recvchamps")
-        self.send_to_all("RECVCHAMPS".encode())
-        # Sending champs
-        print("Sending champs")
-        self.send_to_all(pickle.dumps(champions))
+        self.display_welcome_and_champs()
+        
+
+        # # Ask first connection for champion
+        # data = {
+        #     "CMD": "CHOOSECHAMP",
+        #     "Args": {
+        #         "Color": "red",
+        #         "Champions": champions,
+        #         "player1": self._player1,
+        #         "player2": self._player2
+        #     }
+        # }
+        # self.send_message_to_client(self._connections[0], pickle.dumps(data))
 
 
 if __name__ == "__main__":
     HOST = "127.0.0.1"
-    PORT = 7008
+    PORT = 7010
     serv = TNTServer(HOST, PORT, [])
     serv.start_up()
     serv.shut_down()

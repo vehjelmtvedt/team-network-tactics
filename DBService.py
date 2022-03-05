@@ -36,12 +36,13 @@ def get_champion(name):
     }
 
 def get_all_champs():
-    champs = {}
+    champions = {}
     collection = getCollection("Champions").find()
     for doc in collection:
-        champ = Champion(doc["Name"], int(doc["rockProbability"]), int(doc["paperProbability"]))
-        champs[doc["Name"]] = champ
-    return champs
+        champ = Champion(doc["Name"], float(doc["rockProbability"]), float(doc["paperProbability"]))
+        champions[doc["Name"]] = champ
+    return champions
+
 
 
 
