@@ -44,8 +44,18 @@ def input_champion(prompt: str,
             case name if name in player2:
                 print(f'{name} is in the enemy team. Try again.')
             case _:
-                player1.append(name)
-                break
+                return name
+
+
+def print_player_choice(playernumber, champion):
+    if playernumber == 1:
+        color = "red"
+    else:
+        color = "blue"
+    value = f"Player {playernumber} chose [yellow]{champion}"
+    print(f'[{color}]{value}')
+
+
 
 
 def print_match_summary(match: Match) -> None:
@@ -132,4 +142,6 @@ def print_welcome_msg():
    
 
 if __name__ == '__main__':
-    main()
+    playernr = 1
+    playerchoice = "Vain"
+    print_player_choice(playernr, playerchoice)

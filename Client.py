@@ -20,7 +20,6 @@ class TNTClient:
         self._client.close()
     
     def listen_for_messages(self):
-        receiving_champs = False
         while True:
 
             # Try to recv data
@@ -42,6 +41,16 @@ class TNTClient:
                     TLT.print_welcome_msg()
                 case "RECVCHAMPS":
                     TLT.print_available_champs(data["Value"])
+                case "CHOOSECHAMP":
+                    args = data["Args"]
+                    chosen_champion = TLT.input_champion(args["playername"], args["color"], args["champions"], args["player1list"], args["player2list"])
+                    # Send choice back to server
+                    self._client.send(chosen_champion.encode())
+                case "PLAYERCHOSE":
+                    # Print the other players champ choice
+                    TLT.print_player_choice(data["Args"]["playernumber"], data["Args"]["champion"])
+                case "PRINTMATCH":
+                    TLT.print_match_summary(data["Value"])
 
 
 
@@ -50,9 +59,7 @@ class TNTClient:
 
 if __name__ == "__main__":
     HOST = "127.0.0.1"
-    PORT = 7010
-    try:
-        client = TNTClient(HOST, PORT)
-        client.start_up()
-    except:
-        client.shut_down()
+    PORT = 7017
+    client = TNTClient(HOST, PORT)
+    client.start_up()
+    client.shut_down()
