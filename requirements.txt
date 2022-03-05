@@ -2,4 +2,3 @@ rich
 python-dotenv
 pymongo
 dnspython
-pydantic
