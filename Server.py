@@ -1,7 +1,6 @@
 import socket 
-import DBService
 import pickle
-from core import Match, Team
+from Core import Match, Team
 
 
 class TNTServer:
@@ -17,6 +16,8 @@ class TNTServer:
         self._sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         # Bind it to address and port
         self._sock.bind((self._host, self._port))
+
+        self._DB_sock = socket.create_connection((self._host, 7020))
         # Start listening
         self._sock.listen()
         # Start accepting incoming connections
@@ -63,7 +64,14 @@ class TNTServer:
         self.send_to_all(data)
 
         # Need to send all champions to both clients
-        self._champions = DBService.get_all_champs()
+        DBdata = {
+            "CMD": "GETALLCHAMPS"
+        }
+
+        # Ask the database connection to recieve all champions
+        self._DB_sock.send(pickle.dumps(DBdata))
+        self._champions = pickle.loads(self._DB_sock.recv(2048))
+
 
         data = {
             "CMD": "RECVCHAMPS",
@@ -147,8 +155,12 @@ class TNTServer:
 
         self.send_to_all(data)
 
-        # Finally, upload match staistics
-        DBService.uploadMatchStatistic(match.to_dict())
+        # Finally, upload match staistics with database connection
+        DBdata = {
+            "CMD": "UPLOADMATCH",
+            "Value": match.to_dict()
+        }
+        self._DB_sock.send(pickle.dumps(DBdata))
 
         
             

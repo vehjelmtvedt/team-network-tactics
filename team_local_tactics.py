@@ -4,7 +4,7 @@ from rich.prompt import Prompt
 from rich.table import Table
 
 
-from core import Champion, Match, Shape, Team
+from Core import Champion, Match, Shape, Team
 
 
 
