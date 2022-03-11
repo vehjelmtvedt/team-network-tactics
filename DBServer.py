@@ -1,11 +1,11 @@
 from os import environ
-from dotenv import dotenv_values
 from pymongo import MongoClient
-from Core import Champion
+from core import Champion
 from socket import *
 import pickle
 
-config = dotenv_values(".env")
+# This is not a course in software security...
+CONNECTION_STRING = "mongodb+srv://vehjelmtvedt:Password123@cluster0.ludt0.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
 
 class DBServer:
     def __init__(self, host: str, port: int, buffer_size: int = 2048) -> None:
@@ -16,11 +16,9 @@ class DBServer:
     
     def start(self):
         self._serv_sock = create_server(
-            (self._host, self._port),
-            reuse_port=True
+            (self._host, self._port)
         )
-        CONNECTION_STRING = config["DB_URL"]
-        self._client = MongoClient(CONNECTION_STRING)
+        self._client = MongoClient(CONNECTION_STRING, tls=True, tlsAllowInvalidCertificates=True)
         self.add_connection()
     
     def add_connection(self):
@@ -52,9 +50,6 @@ class DBServer:
                 match data["CMD"]:
                     case "ADDCHAMP":
                         self.add_champion(data["Value"])
-                    case "GETCHAMP":
-                        champ = self.get_champion(data["Value"])
-                        conn.send(pickle.dumps(champ))
                     case "GETALLCHAMPS":
                         champs = self.get_all_champs()
                         conn.send(pickle.dumps(champs))
@@ -72,19 +67,6 @@ class DBServer:
     def add_champion(self, champ):
         collection = self.getCollection("Champions")
         collection.insert_one(champ)
-
-
-    def get_champion(self, name):
-        collection = self.getCollection("Champions")
-        champList = collection.find({"Name": name})
-        # TODO: error handle this
-        champ = champList[0]
-        return {
-            "Name": champ["Name"],
-            "rockProbability": champ["rockProbability"],
-            "paperProbability": champ["paperProbability"],
-            "scissorsProbability": champ["scissorsProbability"]
-        }
 
     def get_all_champs(self):
         champions = {}
@@ -106,7 +88,6 @@ class DBServer:
         collection = self.getCollection("MatchHistory")
         matchList = collection.find({}).limit(nMatches)
         return matchList
-
 
 
 if __name__ == "__main__":

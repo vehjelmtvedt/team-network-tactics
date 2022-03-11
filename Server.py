@@ -1,6 +1,6 @@
 import socket 
 import pickle
-from Core import Match, Team
+from core import Match, Team
 
 
 class TNTServer:
