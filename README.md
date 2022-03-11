@@ -15,3 +15,6 @@ Run Server
 Run two instances of Client
 
 Enjoy :)
+
+# DB Access
+We are using MongoDB Cloud. If you need access to verify that it works, message me.
